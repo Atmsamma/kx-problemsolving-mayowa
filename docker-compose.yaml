@@ -1,0 +1,62 @@
+version: '3.8'
+services:
+  flask:
+    build:
+      context: ./web
+      dockerfile: ./app.Dockerfile
+    container_name: flask
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      APP_ENV: "prod"
+      APP_DEBUG: "True"
+      APP_PORT: 5000
+      MONGODB_DATABASE: flaskdb
+      MONGODB_USERNAME: root
+      MONGODB_PASSWORD: password
+      MONGODB_HOSTNAME: mongodb
+      MONGO_URI: mongodb://root:password@localhost:27017/flaskdb 
+    volumes:
+      - appdata:/var/www
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - mongodb
+    links:
+      - "mongodb:flaskdb"
+    networks:
+      - front-tier
+      - back-tier
+  mongodb:
+    build:
+      context: ./db
+      dockerfile: ./db.Dockerfile
+    container_name: mongodb
+    restart: unless-stopped
+    command: mongod --auth
+    ports:
+      - "27017:27017"
+    environment:
+      MONGODB_INITSCRIPTS_DIR: /docker-entrypoint-initdb.d
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: flaskdb
+      MONGODB_ADVERTISED_HOSTNAME: mongodb
+      MONGODB_DATA_DIR: /data/db
+      MONDODB_LOG_DIR: /dev/null
+    volumes:
+      - mongodbdata:/data/db
+      - mongodbdatacredentials:/docker-entrypoint-initdb.d
+    networks:
+      - back-tier
+
+networks:
+  front-tier: {}
+  back-tier: {}
+
+volumes:
+  mongodbdata:
+  appdata:
+  mongodbdatacredentials:
+
+
