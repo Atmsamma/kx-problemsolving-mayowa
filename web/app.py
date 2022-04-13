@@ -46,12 +46,12 @@ def status():
 
 # data endpoint
 @app.route('/data', methods=['GET'])
-def get_all_job_titles():
-    titles = db.job_titles
+def get_all_users():
+    users = db.users
 
     data = []
 
-    for q in titles.find():
+    for q in users.find():
         data.append({'email' : q['email'], 'username' : q['username'], 
         'password' : q['password'],})
 
