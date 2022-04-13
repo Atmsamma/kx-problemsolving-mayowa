@@ -1,5 +1,5 @@
-const mongo = require('./mongo')
-const userSchema = require('./schemas/user-schema')
+import mongo from './mongo'
+import userSchema from './user-schema'
 
 const connectToMongoDB = async () => {
   await mongo().then(async (mongoose) => {

@@ -3,7 +3,6 @@ from flask import Flask, Response, request, jsonify
 from flask_pymongo import PyMongo
 import docker
 import json
-import datetime
 
 
 app = Flask(__name__)
@@ -30,28 +29,22 @@ def status():
     health_list = []
 
     for c in client.containers.list(all=True):
-        # string conversion only works for 6 digit ms,  strip back to 26 chars
-        if c.status == "running":
-            utc_time = datetime.strptime(client.api.inspect_container(c.short_id)["State"]["StartedAt"][:26]+"Z", "%Y-%m-%dT%H:%M:%S.%fZ")
-        else:
-            utc_time = datetime.utcnow()
         health_list.append({"id":c.short_id, "name":c.name, "image":c.image.tags[0] if len(c.image.tags)>0 else "unknown", 
-                    "status":c.status, "logs":True, "inspect":True,
-                    "stats":c.status=="running", "restart":c.status=="running", "stop":c.status=="running", "start":c.status!="running", "delete":True,
-                    "uptime":(utc_time - datetime(1970, 1, 1)).total_seconds(),
+                    "status":c.status
                     })
+
     return Response(json.dumps(health_list), mimetype="text/json")
     
 
 
 # data endpoint
 @app.route('/data', methods=['GET'])
-def get_all_users():
-    users = db.users
+def get_all_job_titles():
+    titles = db.job_titles
 
     data = []
 
-    for q in users.find():
+    for q in titles.find():
         data.append({'email' : q['email'], 'username' : q['username'], 
         'password' : q['password'],})
 

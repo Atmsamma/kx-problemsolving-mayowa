@@ -1,8 +1,8 @@
-const mongoose = require('mongoose')
-const mongoURl = `mongodb://root:password@localhost:27017/flaskdb`
+import mongoose, { connect } from 'mongoose'
+const mongoURl = "mongodb://" + process.env.MONGO_INITDB_ROOT_USERNAME +  ":" + process.env.MONGO_INITDB_ROOT_PASSWORD + "@" + process.env.MONGODB_ADVERTISED_HOSTNAME + "27017/" + process.env.MONGO_INITDB_DATABASE
 
-module.exports = async () => {
-  await mongoose.connect(mongoURl, {
+export default async () => {
+  await connect(mongoURl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })

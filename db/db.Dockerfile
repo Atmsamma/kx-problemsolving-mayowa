@@ -2,7 +2,6 @@ FROM mongo:latest
 
 WORKDIR /data/db
 
-ADD . /data/db
 ADD ./mongo.js /docker-entrypoint-initdb.d
 ADD ./init.js /docker-entrypoint-initdb.d
 ADD ./user-schema.js /docker-entrypoint-initdb.d
